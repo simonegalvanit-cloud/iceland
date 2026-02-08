@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>♡</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
@@ -11,13 +11,16 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --night-1: #020810;
-    --night-2: #0a1628;
-    --aurora-1: #2dd4bf;
-    --aurora-2: #06b6d4;
-    --aurora-3: #8b5cf6;
-    --aurora-4: #ec4899;
-    --glow: rgba(45, 212, 191, 0.4);
+    --night-1: #060614;
+    --night-2: #100e24;
+    --aurora-1: #7dd3c0;
+    --aurora-2: #89c4e1;
+    --aurora-3: #c4a6f5;
+    --aurora-4: #f0a0c8;
+    --blush: #f5c6d0;
+    --lavender: #d5c2f0;
+    --soft-mint: #b5ead7;
+    --glow: rgba(199, 166, 245, 0.35);
   }
 
   html {
@@ -33,6 +36,7 @@
     font-family: 'Outfit', sans-serif;
     overflow-x: hidden;
     cursor: default;
+    -webkit-tap-highlight-color: transparent;
   }
 
   canvas#bgCanvas {
@@ -50,23 +54,25 @@
   /* ====== SECTION 1: ARE YOU READY ====== */
   .s1 {
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    padding: 20px;
   }
 
   .ready-text {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-size: clamp(2rem, 8vw, 5.5rem);
     font-weight: 400;
     font-style: italic;
     letter-spacing: 2px;
     text-align: center;
     opacity: 0;
     animation: breatheIn 2.5s ease forwards;
-    text-shadow: 0 0 60px rgba(45, 212, 191, 0.2), 0 0 120px rgba(139, 92, 246, 0.1);
+    text-shadow: 0 0 60px rgba(199, 166, 245, 0.25), 0 0 120px rgba(240, 160, 200, 0.15);
   }
 
   @keyframes breatheIn {
@@ -75,13 +81,41 @@
   }
 
   .ready-sub {
-    font-size: clamp(0.8rem, 2vw, 1rem);
-    letter-spacing: 8px;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    letter-spacing: 6px;
     text-transform: uppercase;
-    color: rgba(240, 237, 232, 0.3);
-    margin-top: 30px;
+    color: rgba(240, 237, 232, 0.35);
+    margin-top: 24px;
     opacity: 0;
     animation: fadeIn 1.5s ease 2s forwards;
+  }
+
+  /* Sparkle decorations near the hero text */
+  .sparkle-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+    opacity: 0;
+    animation: fadeIn 1.5s ease 1.8s forwards;
+  }
+
+  .mini-sparkle {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    animation: twinkleSparkle 2.5s ease-in-out infinite;
+  }
+  .mini-sparkle:nth-child(1) { background: var(--aurora-4); animation-delay: 0s; }
+  .mini-sparkle:nth-child(2) { background: var(--aurora-3); animation-delay: 0.5s; width: 3px; height: 3px; }
+  .mini-sparkle:nth-child(3) { background: var(--aurora-1); animation-delay: 1s; }
+  .mini-sparkle:nth-child(4) { background: var(--blush); animation-delay: 0.3s; width: 3px; height: 3px; }
+  .mini-sparkle:nth-child(5) { background: var(--aurora-2); animation-delay: 0.8s; }
+
+  @keyframes twinkleSparkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.4); }
   }
 
   @keyframes fadeIn {
@@ -90,12 +124,27 @@
 
   .scroll-line {
     position: absolute;
-    bottom: 50px;
+    bottom: 40px;
     width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, transparent, var(--aurora-1), transparent);
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, var(--aurora-3), transparent);
     opacity: 0;
     animation: fadeIn 1s ease 2.8s forwards, scrollPulse 2s ease-in-out 3s infinite;
+  }
+
+  .scroll-heart {
+    position: absolute;
+    bottom: 24px;
+    font-size: 10px;
+    opacity: 0;
+    animation: fadeIn 1s ease 3s forwards, heartBounce 2s ease-in-out 3.2s infinite;
+    color: var(--aurora-4);
+    filter: drop-shadow(0 0 4px rgba(240, 160, 200, 0.5));
+  }
+
+  @keyframes heartBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-6px) scale(1.15); }
   }
 
   @keyframes scrollPulse {
@@ -105,7 +154,7 @@
 
   /* ====== SECTION 2: THE REVEAL ====== */
   .s2 {
-    height: 300vh;
+    height: 200vh;
     position: relative;
   }
 
@@ -113,6 +162,7 @@
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -123,15 +173,16 @@
   .reveal-container {
     position: relative;
     text-align: center;
+    padding: 0 16px;
   }
 
   .reveal-iceland {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(4rem, 15vw, 12rem);
+    font-size: clamp(3rem, 14vw, 12rem);
     font-weight: 700;
-    letter-spacing: clamp(8px, 3vw, 30px);
+    letter-spacing: clamp(6px, 3vw, 30px);
     line-height: 1;
-    background: linear-gradient(135deg, var(--aurora-1), var(--aurora-2), var(--aurora-3), var(--aurora-4));
+    background: linear-gradient(135deg, var(--soft-mint), var(--aurora-2), var(--lavender), var(--aurora-4), var(--blush));
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -159,8 +210,8 @@
   .reveal-year {
     font-family: 'Outfit', sans-serif;
     font-weight: 200;
-    font-size: clamp(1.2rem, 4vw, 2.5rem);
-    letter-spacing: clamp(10px, 4vw, 35px);
+    font-size: clamp(1rem, 4vw, 2.5rem);
+    letter-spacing: clamp(8px, 4vw, 35px);
     margin-top: 10px;
     opacity: 0;
     transform: translateY(30px);
@@ -173,6 +224,36 @@
     transform: translateY(0);
   }
 
+  /* Small sparkle accents around reveal */
+  .reveal-sparkles {
+    position: absolute;
+    inset: -60px;
+    pointer-events: none;
+  }
+
+  .reveal-sparkle {
+    position: absolute;
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 1s ease 0.8s;
+    animation: none;
+  }
+
+  .reveal-sparkle.visible {
+    opacity: 0.6;
+    animation: floatSparkle 3s ease-in-out infinite;
+  }
+
+  .reveal-sparkle:nth-child(1) { top: -10px; left: 10%; animation-delay: 0s; color: var(--blush); }
+  .reveal-sparkle:nth-child(2) { top: 20%; right: 5%; animation-delay: 0.7s; color: var(--lavender); }
+  .reveal-sparkle:nth-child(3) { bottom: 10px; left: 20%; animation-delay: 1.2s; color: var(--soft-mint); }
+  .reveal-sparkle:nth-child(4) { top: 10%; left: 2%; animation-delay: 0.4s; color: var(--aurora-4); font-size: 8px; }
+
+  @keyframes floatSparkle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(15deg); }
+  }
+
   /* Glow ring behind the text */
   .glow-ring {
     position: absolute;
@@ -180,7 +261,7 @@
     transform: translate(-50%, -50%);
     width: 0; height: 0;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--glow) 0%, rgba(240, 160, 200, 0.08) 40%, transparent 70%);
     opacity: 0;
     transition: all 1.8s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: -1;
@@ -196,7 +277,7 @@
   .h-line {
     position: absolute;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--aurora-1), var(--aurora-2), transparent);
+    background: linear-gradient(90deg, transparent, var(--lavender), var(--aurora-4), transparent);
     width: 0;
     transition: width 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
     left: 50%;
@@ -208,19 +289,20 @@
 
   /* ====== SECTION 3: SKETCH IMAGE ====== */
   .s3 {
-    min-height: 100vh;
+    min-height: 70vh;
+    min-height: 70dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 80px 24px;
+    padding: 60px 20px 80px;
     position: relative;
   }
 
   .sketch-frame {
     position: relative;
-    max-width: 650px;
-    width: 90%;
+    max-width: 600px;
+    width: 88%;
     opacity: 0;
     transform: translateY(50px) rotate(-1deg);
     transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -233,29 +315,46 @@
 
   .sketch-frame img {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 14px;
     box-shadow:
-      0 25px 80px rgba(0,0,0,0.6),
-      0 0 100px rgba(45, 212, 191, 0.08),
-      0 0 200px rgba(139, 92, 246, 0.05);
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 80px rgba(199, 166, 245, 0.1),
+      0 0 160px rgba(240, 160, 200, 0.06);
   }
 
   .sketch-frame::before {
     content: '';
     position: absolute;
     inset: -2px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--aurora-1), var(--aurora-3), var(--aurora-4), var(--aurora-2));
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--soft-mint), var(--lavender), var(--aurora-4), var(--blush));
     background-size: 300% 300%;
     animation: shimmer 4s ease infinite;
     z-index: -1;
     opacity: 0.5;
   }
 
+  /* Cute caption under sketch */
+  .sketch-caption {
+    margin-top: 24px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: rgba(240, 237, 232, 0.4);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.2s ease 0.4s;
+    letter-spacing: 1px;
+  }
+
+  .sketch-caption.visible {
+    opacity: 1;
+  }
+
   /* floating particles around sketch */
   .particle-field {
     position: absolute;
-    inset: -100px;
+    inset: -80px;
     pointer-events: none;
     z-index: -1;
   }
@@ -271,6 +370,18 @@
     animation-delay: var(--delay);
   }
 
+  /* Heart-shaped particles */
+  .particle.heart {
+    background: none;
+    border-radius: 0;
+  }
+  .particle.heart::before {
+    content: '\2665';
+    font-size: var(--size);
+    color: var(--color);
+    line-height: 1;
+  }
+
   @keyframes floatParticle {
     0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
     30% { opacity: 0.6; }
@@ -281,9 +392,9 @@
   /* ====== SHOOTING STARS (CSS) ====== */
   .shooting-star {
     position: fixed;
-    width: 120px;
+    width: 80px;
     height: 1px;
-    background: linear-gradient(90deg, white, transparent);
+    background: linear-gradient(90deg, rgba(240, 160, 200, 0.9), transparent);
     opacity: 0;
     z-index: 0;
     animation: shoot var(--dur) linear infinite;
@@ -296,21 +407,175 @@
   @keyframes shoot {
     0% { opacity: 0; transform: translateX(0) rotate(var(--angle)); }
     2% { opacity: 0.8; }
-    8% { opacity: 0; transform: translateX(400px) rotate(var(--angle)); }
+    8% { opacity: 0; transform: translateX(300px) rotate(var(--angle)); }
     100% { opacity: 0; }
   }
 
   /* ====== CURSOR GLOW ====== */
   .cursor-glow {
     position: fixed;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(45, 212, 191, 0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(199, 166, 245, 0.06) 0%, rgba(240, 160, 200, 0.03) 40%, transparent 70%);
     pointer-events: none;
     z-index: 0;
     transform: translate(-50%, -50%);
     transition: left 0.3s ease, top 0.3s ease;
+  }
+
+  /* ====== FLOATING HEARTS (CUTE BACKGROUND ELEMENT) ====== */
+  .floating-hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    font-size: var(--size);
+    opacity: 0;
+    animation: riseHeart var(--dur) ease-in-out infinite;
+    animation-delay: var(--delay);
+    left: var(--x);
+    bottom: -30px;
+    color: var(--color);
+    filter: blur(0.5px);
+  }
+
+  @keyframes riseHeart {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.5); }
+    15% { opacity: 0.25; }
+    50% { opacity: 0.15; transform: translateY(-50vh) rotate(20deg) scale(0.8); }
+    100% { opacity: 0; transform: translateY(-105vh) rotate(-10deg) scale(0.3); }
+  }
+
+  /* ====== MOBILE RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    .s1 {
+      padding: 16px;
+    }
+
+    .ready-text {
+      font-size: clamp(1.8rem, 9vw, 3.5rem);
+      text-shadow: 0 0 40px rgba(199, 166, 245, 0.2);
+    }
+
+    .ready-sub {
+      letter-spacing: 4px;
+      margin-top: 18px;
+      font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+    }
+
+    .scroll-line {
+      bottom: 30px;
+      height: 40px;
+    }
+
+    .scroll-heart {
+      bottom: 14px;
+      font-size: 8px;
+    }
+
+    .s2 {
+      height: 180vh;
+    }
+
+    .reveal-iceland {
+      font-size: clamp(2.5rem, 16vw, 6rem);
+      letter-spacing: clamp(4px, 3vw, 16px);
+    }
+
+    .reveal-year {
+      font-size: clamp(0.85rem, 4vw, 1.5rem);
+      letter-spacing: clamp(6px, 4vw, 20px);
+      margin-top: 6px;
+    }
+
+    .h-line.visible {
+      width: min(90vw, 400px);
+    }
+
+    .glow-ring.visible {
+      width: 200vw;
+      height: 200vw;
+      opacity: 0.2;
+    }
+
+    .s3 {
+      padding: 40px 16px;
+    }
+
+    .sketch-frame {
+      width: 92%;
+      max-width: 500px;
+    }
+
+    .sketch-frame img {
+      border-radius: 10px;
+    }
+
+    .sketch-frame::before {
+      border-radius: 12px;
+    }
+
+    .particle-field {
+      inset: -50px;
+    }
+
+    .shooting-star {
+      width: 60px;
+    }
+
+    /* Hide cursor glow on touch devices */
+    .cursor-glow {
+      display: none;
+    }
+
+    .reveal-sparkles {
+      inset: -30px;
+    }
+
+    .reveal-sparkle {
+      font-size: 8px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .ready-text {
+      font-size: clamp(1.5rem, 10vw, 2.5rem);
+    }
+
+    .reveal-iceland {
+      font-size: clamp(2rem, 18vw, 4rem);
+    }
+
+    .reveal-year {
+      font-size: clamp(0.75rem, 4.5vw, 1.2rem);
+      letter-spacing: clamp(4px, 3vw, 14px);
+    }
+
+    .sparkle-row {
+      gap: 8px;
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Fix for notched/rounded phone screens */
+  @supports(padding: max(0px)) {
+    .s1, .s3 {
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
   }
 </style>
 </head>
@@ -319,6 +584,9 @@
 <canvas id="bgCanvas"></canvas>
 
 <div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Floating hearts background -->
+<div class="floating-hearts" id="floatingHearts"></div>
 
 <!-- Shooting stars -->
 <div class="shooting-star" style="--dur:8s;--delay:1s;--top:15%;--left:10%;--angle:-15deg;"></div>
@@ -332,14 +600,28 @@
   <!-- SECTION 1 -->
   <section class="s1">
     <h1 class="ready-text">are you ready?</h1>
+    <div class="sparkle-row">
+      <div class="mini-sparkle"></div>
+      <div class="mini-sparkle"></div>
+      <div class="mini-sparkle"></div>
+      <div class="mini-sparkle"></div>
+      <div class="mini-sparkle"></div>
+    </div>
     <p class="ready-sub">scroll down</p>
     <div class="scroll-line"></div>
+    <div class="scroll-heart">&#9829;</div>
   </section>
 
   <!-- SECTION 2 -->
   <section class="s2">
     <div class="s2-sticky">
       <div class="reveal-container">
+        <div class="reveal-sparkles" id="revealSparkles">
+          <span class="reveal-sparkle">&#10022;</span>
+          <span class="reveal-sparkle">&#10023;</span>
+          <span class="reveal-sparkle">&#10022;</span>
+          <span class="reveal-sparkle">&#10023;</span>
+        </div>
         <div class="glow-ring" id="glowRing"></div>
         <div class="h-line top" id="hLineTop"></div>
         <h2 class="reveal-iceland" id="revealText">ICELAND</h2>
@@ -353,13 +635,17 @@
   <section class="s3">
     <div class="sketch-frame" id="sketchFrame">
       <div class="particle-field" id="particleField"></div>
-      <img src="sketch.jpg" alt="Our adventure awaits">
+      <img src="adventure.jpg" alt="Our adventure awaits">
     </div>
+    <p class="sketch-caption" id="sketchCaption">our adventure awaits &#10084;</p>
   </section>
 
 </div>
 
 <script>
+// ====== DETECT MOBILE ======
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
+
 // ====== STARFIELD CANVAS ======
 const canvas = document.getElementById('bgCanvas');
 const ctx = canvas.getContext('2d');
@@ -372,8 +658,9 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-// Create stars
-for (let i = 0; i < 350; i++) {
+// Create stars (fewer on mobile for performance)
+const starCount = isMobile ? 150 : 350;
+for (let i = 0; i < starCount; i++) {
   stars.push({
     x: Math.random() * 3000 - 500,
     y: Math.random() * 3000 - 500,
@@ -385,21 +672,22 @@ for (let i = 0; i < 350; i++) {
   });
 }
 
-// Aurora layers
+// Aurora layers (softer, more pastel tones)
 const auroraLayers = [
-  { color: 'rgba(45, 212, 191, 0.03)', y: 0.15, speed: 0.0003, amp: 80 },
-  { color: 'rgba(6, 182, 212, 0.025)', y: 0.2, speed: 0.0005, amp: 60 },
-  { color: 'rgba(139, 92, 246, 0.02)', y: 0.12, speed: 0.0004, amp: 100 },
-  { color: 'rgba(236, 72, 153, 0.015)', y: 0.18, speed: 0.00035, amp: 70 },
+  { color: 'rgba(125, 211, 192, 0.025)', y: 0.15, speed: 0.0003, amp: isMobile ? 50 : 80 },
+  { color: 'rgba(137, 196, 225, 0.02)', y: 0.2, speed: 0.0005, amp: isMobile ? 40 : 60 },
+  { color: 'rgba(196, 166, 245, 0.025)', y: 0.12, speed: 0.0004, amp: isMobile ? 60 : 100 },
+  { color: 'rgba(240, 160, 200, 0.02)', y: 0.18, speed: 0.00035, amp: isMobile ? 45 : 70 },
 ];
 
 let time = 0;
 
 function drawAurora(t) {
+  const step = isMobile ? 8 : 4;
   auroraLayers.forEach(layer => {
     ctx.beginPath();
     ctx.moveTo(0, h);
-    for (let x = 0; x <= w; x += 4) {
+    for (let x = 0; x <= w; x += step) {
       const y = h * layer.y +
         Math.sin(x * 0.003 + t * layer.speed * 1000) * layer.amp +
         Math.sin(x * 0.007 + t * layer.speed * 500) * (layer.amp * 0.5) +
@@ -421,11 +709,11 @@ function animate(t) {
   time = t;
   ctx.clearRect(0, 0, w, h);
 
-  // Gradient sky
+  // Gradient sky (slightly warmer tones)
   const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-  skyGrad.addColorStop(0, '#010510');
-  skyGrad.addColorStop(0.4, '#06101f');
-  skyGrad.addColorStop(1, '#0a1628');
+  skyGrad.addColorStop(0, '#050510');
+  skyGrad.addColorStop(0.4, '#0e0c1f');
+  skyGrad.addColorStop(1, '#100e24');
   ctx.fillStyle = skyGrad;
   ctx.fillRect(0, 0, w, h);
 
@@ -434,8 +722,8 @@ function animate(t) {
 
   // Stars with parallax
   const scrollY = window.scrollY;
-  const parallaxX = (mouseX - w / 2) * 0.01;
-  const parallaxY = (mouseY - h / 2) * 0.01;
+  const parallaxX = isMobile ? 0 : (mouseX - w / 2) * 0.01;
+  const parallaxY = isMobile ? 0 : (mouseY - h / 2) * 0.01;
 
   stars.forEach(star => {
     const depth = star.z / 1500;
@@ -453,11 +741,11 @@ function animate(t) {
     ctx.fillStyle = `rgba(240, 237, 232, ${Math.max(alpha, 0.05)})`;
     ctx.fill();
 
-    // Glow on brighter stars
-    if (star.size > 1.2) {
+    // Soft glow on brighter stars (skip on mobile for performance)
+    if (!isMobile && star.size > 1.2) {
       ctx.beginPath();
       ctx.arc(sx, sy, size * 3, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200, 230, 255, ${alpha * 0.08})`;
+      ctx.fillStyle = `rgba(220, 200, 240, ${alpha * 0.08})`;
       ctx.fill();
     }
   });
@@ -466,14 +754,16 @@ function animate(t) {
 }
 requestAnimationFrame(animate);
 
-// Mouse tracking
-document.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  const glow = document.getElementById('cursorGlow');
-  glow.style.left = e.clientX + 'px';
-  glow.style.top = e.clientY + 'px';
-});
+// Mouse tracking (desktop only)
+if (!isMobile) {
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    const glow = document.getElementById('cursorGlow');
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+}
 
 // ====== SCROLL REVEAL ======
 const s2 = document.querySelector('.s2');
@@ -483,6 +773,8 @@ const glowRing = document.getElementById('glowRing');
 const hLineTop = document.getElementById('hLineTop');
 const hLineBottom = document.getElementById('hLineBottom');
 const sketchFrame = document.getElementById('sketchFrame');
+const sketchCaption = document.getElementById('sketchCaption');
+const revealSparkles = document.querySelectorAll('.reveal-sparkle');
 
 let revealed = false;
 
@@ -497,31 +789,53 @@ function onScroll() {
     glowRing.classList.add('visible');
     hLineTop.classList.add('visible');
     hLineBottom.classList.add('visible');
+    revealSparkles.forEach(s => s.classList.add('visible'));
   }
 
   // Sketch reveal
   const sketchRect = sketchFrame.getBoundingClientRect();
   if (sketchRect.top < window.innerHeight * 0.8) {
     sketchFrame.classList.add('visible');
+    sketchCaption.classList.add('visible');
   }
 }
 
-window.addEventListener('scroll', onScroll);
+window.addEventListener('scroll', onScroll, { passive: true });
 
 // ====== FLOATING PARTICLES around sketch ======
 const pf = document.getElementById('particleField');
-const colors = ['var(--aurora-1)', 'var(--aurora-2)', 'var(--aurora-3)', 'var(--aurora-4)'];
-for (let i = 0; i < 30; i++) {
+const colors = ['var(--aurora-1)', 'var(--aurora-3)', 'var(--aurora-4)', 'var(--blush)', 'var(--lavender)'];
+const particleCount = isMobile ? 16 : 30;
+
+for (let i = 0; i < particleCount; i++) {
   const p = document.createElement('div');
-  p.className = 'particle';
+  const isHeart = Math.random() > 0.7;
+  p.className = isHeart ? 'particle heart' : 'particle';
   p.style.left = Math.random() * 100 + '%';
   p.style.top = Math.random() * 100 + '%';
-  p.style.setProperty('--size', (2 + Math.random() * 4) + 'px');
+  p.style.setProperty('--size', (isHeart ? (6 + Math.random() * 6) : (2 + Math.random() * 4)) + 'px');
   p.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
   p.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
   p.style.setProperty('--delay', (Math.random() * 5) + 's');
-  p.style.setProperty('--drift', (-30 - Math.random() * 40) + 'px');
+  p.style.setProperty('--drift', (-25 - Math.random() * 35) + 'px');
   pf.appendChild(p);
+}
+
+// ====== FLOATING HEARTS BACKGROUND ======
+const heartsContainer = document.getElementById('floatingHearts');
+const heartColors = ['var(--aurora-4)', 'var(--blush)', 'var(--lavender)', 'var(--soft-mint)'];
+const heartCount = isMobile ? 6 : 10;
+
+for (let i = 0; i < heartCount; i++) {
+  const heart = document.createElement('div');
+  heart.className = 'floating-heart';
+  heart.innerHTML = '&#9829;';
+  heart.style.setProperty('--x', Math.random() * 100 + '%');
+  heart.style.setProperty('--size', (8 + Math.random() * 10) + 'px');
+  heart.style.setProperty('--color', heartColors[Math.floor(Math.random() * heartColors.length)]);
+  heart.style.setProperty('--dur', (12 + Math.random() * 18) + 's');
+  heart.style.setProperty('--delay', (Math.random() * 15) + 's');
+  heartsContainer.appendChild(heart);
 }
 </script>
 
