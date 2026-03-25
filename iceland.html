@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>♡</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --night-1: #060614;
+    --aurora-1: #7dd3c0;
+    --aurora-2: #89c4e1;
+    --aurora-3: #c4a6f5;
+    --aurora-4: #f0a0c8;
+    --blush: #f5c6d0;
+    --lavender: #d5c2f0;
+    --soft-mint: #b5ead7;
+    --glow: rgba(199, 166, 245, 0.35);
+  }
+
+  html {
+    overflow: hidden;
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar { display: none; }
+
+  body {
+    background: var(--night-1);
+    color: #f0ede8;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  canvas#bgCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  /* ====== PHASE 1: ARE YOU READY ====== */
+  .phase-ready {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, filter 0.8s ease;
+  }
+
+  .phase-ready.hidden {
+    opacity: 0;
+    filter: blur(6px);
+    pointer-events: none;
+  }
+
+  .ready-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 6vw, 4rem);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 2px;
+    text-align: center;
+    opacity: 0;
+    animation: breatheIn 2s ease forwards;
+    text-shadow: 0 0 60px rgba(199, 166, 245, 0.25), 0 0 120px rgba(240, 160, 200, 0.15);
+  }
+
+  @keyframes breatheIn {
+    0% { opacity: 0; transform: scale(0.92); filter: blur(8px); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+
+  .sparkle-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+  }
+
+  .mini-sparkle {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    animation: twinkleSparkle 2.5s ease-in-out infinite;
+  }
+  .mini-sparkle:nth-child(1) { background: var(--aurora-4); animation-delay: 0s; }
+  .mini-sparkle:nth-child(2) { background: var(--aurora-3); animation-delay: 0.5s; width: 2px; height: 2px; }
+  .mini-sparkle:nth-child(3) { background: var(--aurora-1); animation-delay: 1s; }
+  .mini-sparkle:nth-child(4) { background: var(--blush); animation-delay: 0.3s; width: 2px; height: 2px; }
+  .mini-sparkle:nth-child(5) { background: var(--aurora-2); animation-delay: 0.8s; }
+
+  @keyframes twinkleSparkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.4); }
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* ====== PHASE 2: THE REVEAL ====== */
+  .phase-reveal {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 1s ease;
+    padding: 20px;
+  }
+
+  .phase-reveal.show {
+    opacity: 1;
+  }
+
+  .reveal-container {
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reveal-iceland {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 10vw, 7rem);
+    font-weight: 700;
+    letter-spacing: clamp(4px, 2vw, 20px);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--soft-mint), var(--aurora-2), var(--lavender), var(--aurora-4), var(--blush));
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 5s ease infinite;
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: blur(15px);
+  }
+
+  .reveal-iceland.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .reveal-year {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 200;
+    font-size: clamp(0.8rem, 3vw, 1.6rem);
+    letter-spacing: clamp(6px, 3vw, 24px);
+    margin-top: 6px;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+    color: rgba(240, 237, 232, 0.7);
+  }
+
+  .reveal-year.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Sparkle accents */
+  .reveal-sparkles {
+    position: absolute;
+    inset: -40px;
+    pointer-events: none;
+  }
+
+  .reveal-sparkle {
+    position: absolute;
+    font-size: 8px;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.6s;
+  }
+
+  .reveal-sparkle.visible {
+    opacity: 0.5;
+    animation: floatSparkle 3s ease-in-out infinite;
+  }
+
+  .reveal-sparkle:nth-child(1) { top: -5px; left: 10%; animation-delay: 0s; color: var(--blush); }
+  .reveal-sparkle:nth-child(2) { top: 15%; right: 5%; animation-delay: 0.7s; color: var(--lavender); }
+  .reveal-sparkle:nth-child(3) { bottom: 5px; left: 15%; animation-delay: 1.2s; color: var(--soft-mint); }
+  .reveal-sparkle:nth-child(4) { top: 8%; left: 2%; animation-delay: 0.4s; color: var(--aurora-4); font-size: 6px; }
+
+  @keyframes floatSparkle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(15deg); }
+  }
+
+  /* Glow ring */
+  .glow-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0; height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow) 0%, rgba(240, 160, 200, 0.08) 40%, transparent 70%);
+    opacity: 0;
+    transition: all 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: -1;
+  }
+
+  .glow-ring.visible {
+    width: 120vw;
+    height: 120vw;
+    opacity: 0.25;
+  }
+
+  /* H-lines */
+  .h-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--lavender), var(--aurora-4), transparent);
+    width: 0;
+    transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .h-line.top { top: -20px; }
+  .h-line.bottom { bottom: -20px; }
+  .h-line.visible { width: min(70vw, 500px); }
+
+  /* ====== IMAGE ====== */
+  .sketch-frame {
+    position: relative;
+    max-width: 340px;
+    width: 70%;
+    margin-top: 24px;
+    opacity: 0;
+    transform: translateY(25px) scale(0.95);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+  }
+
+  .sketch-frame.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sketch-frame img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow:
+      0 15px 50px rgba(0,0,0,0.5),
+      0 0 60px rgba(199, 166, 245, 0.1),
+      0 0 120px rgba(240, 160, 200, 0.06);
+  }
+
+  .sketch-frame::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--soft-mint), var(--lavender), var(--aurora-4), var(--blush));
+    background-size: 300% 300%;
+    animation: shimmer 4s ease infinite;
+    z-index: -1;
+    opacity: 0.45;
+  }
+
+  /* Particles around image */
+  .particle-field {
+    position: absolute;
+    inset: -60px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .particle {
+    position: absolute;
+    width: var(--size);
+    height: var(--size);
+    background: var(--color);
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatParticle var(--dur) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+
+  .particle.heart {
+    background: none;
+    border-radius: 0;
+  }
+  .particle.heart::before {
+    content: '\2665';
+    font-size: var(--size);
+    color: var(--color);
+    line-height: 1;
+  }
+
+  @keyframes floatParticle {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+    30% { opacity: 0.6; }
+    50% { opacity: 0.8; transform: translateY(var(--drift)) scale(1); }
+    70% { opacity: 0.4; }
+  }
+
+  /* ====== SHOOTING STARS ====== */
+  .shooting-star {
+    position: fixed;
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(240, 160, 200, 0.9), transparent);
+    opacity: 0;
+    z-index: 0;
+    animation: shoot var(--dur) linear infinite;
+    animation-delay: var(--delay);
+    top: var(--top);
+    left: var(--left);
+    transform: rotate(var(--angle));
+  }
+
+  @keyframes shoot {
+    0% { opacity: 0; transform: translateX(0) rotate(var(--angle)); }
+    2% { opacity: 0.8; }
+    8% { opacity: 0; transform: translateX(300px) rotate(var(--angle)); }
+    100% { opacity: 0; }
+  }
+
+  /* ====== CURSOR GLOW ====== */
+  .cursor-glow {
+    position: fixed;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(199, 166, 245, 0.06) 0%, rgba(240, 160, 200, 0.03) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    transition: left 0.3s ease, top 0.3s ease;
+  }
+
+  /* ====== FLOATING HEARTS ====== */
+  .floating-hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    font-size: var(--size);
+    opacity: 0;
+    animation: riseHeart var(--dur) ease-in-out infinite;
+    animation-delay: var(--delay);
+    left: var(--x);
+    bottom: -30px;
+    color: var(--color);
+    filter: blur(0.5px);
+  }
+
+  @keyframes riseHeart {
+    0% { opacity: 0; transform: translateY(0) rotate(0deg) scale(0.5); }
+    15% { opacity: 0.2; }
+    50% { opacity: 0.12; transform: translateY(-50vh) rotate(20deg) scale(0.8); }
+    100% { opacity: 0; transform: translateY(-105vh) rotate(-10deg) scale(0.3); }
+  }
+
+  /* ====== MOBILE ====== */
+  @media (max-width: 768px) {
+    .ready-text {
+      font-size: clamp(1.4rem, 7vw, 2.5rem);
+    }
+
+    .reveal-iceland {
+      font-size: clamp(2rem, 13vw, 5rem);
+      letter-spacing: clamp(3px, 2vw, 12px);
+    }
+
+    .reveal-year {
+      font-size: clamp(0.7rem, 3.5vw, 1.2rem);
+      letter-spacing: clamp(4px, 3vw, 16px);
+    }
+
+    .h-line.visible {
+      width: min(85vw, 350px);
+    }
+
+    .sketch-frame {
+      width: 75%;
+      max-width: 300px;
+      margin-top: 18px;
+    }
+
+    .sketch-frame img {
+      border-radius: 10px;
+    }
+
+    .sketch-frame::before {
+      border-radius: 12px;
+    }
+
+    .particle-field {
+      inset: -40px;
+    }
+
+    .shooting-star {
+      width: 60px;
+    }
+
+    .cursor-glow {
+      display: none;
+    }
+
+    .reveal-sparkles {
+      inset: -20px;
+    }
+
+    .reveal-sparkle {
+      font-size: 6px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .ready-text {
+      font-size: clamp(1.2rem, 8vw, 2rem);
+    }
+
+    .reveal-iceland {
+      font-size: clamp(1.8rem, 15vw, 3.5rem);
+    }
+
+    .reveal-year {
+      font-size: clamp(0.65rem, 4vw, 1rem);
+      letter-spacing: clamp(3px, 2.5vw, 12px);
+    }
+
+    .sketch-frame {
+      width: 80%;
+      margin-top: 14px;
+    }
+
+    .sparkle-row {
+      gap: 7px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @supports(padding: max(0px)) {
+    .phase-reveal {
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+    }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<div class="floating-hearts" id="floatingHearts"></div>
+
+<!-- Shooting stars -->
+<div class="shooting-star" style="--dur:8s;--delay:1s;--top:15%;--left:10%;--angle:-15deg;"></div>
+<div class="shooting-star" style="--dur:12s;--delay:4s;--top:25%;--left:60%;--angle:-20deg;"></div>
+<div class="shooting-star" style="--dur:10s;--delay:7s;--top:8%;--left:30%;--angle:-10deg;"></div>
+<div class="shooting-star" style="--dur:15s;--delay:2s;--top:35%;--left:75%;--angle:-25deg;"></div>
+<div class="shooting-star" style="--dur:9s;--delay:9s;--top:12%;--left:50%;--angle:-12deg;"></div>
+
+<!-- Phase 1: Are you ready? -->
+<div class="phase-ready" id="phaseReady">
+  <h1 class="ready-text">are you ready?</h1>
+  <div class="sparkle-row">
+    <div class="mini-sparkle"></div>
+    <div class="mini-sparkle"></div>
+    <div class="mini-sparkle"></div>
+    <div class="mini-sparkle"></div>
+    <div class="mini-sparkle"></div>
+  </div>
+</div>
+
+<!-- Phase 2: Reveal -->
+<div class="phase-reveal" id="phaseReveal">
+  <div class="reveal-container">
+    <div class="reveal-sparkles" id="revealSparkles">
+      <span class="reveal-sparkle">&#10022;</span>
+      <span class="reveal-sparkle">&#10023;</span>
+      <span class="reveal-sparkle">&#10022;</span>
+      <span class="reveal-sparkle">&#10023;</span>
+    </div>
+    <div class="glow-ring" id="glowRing"></div>
+    <div class="h-line top" id="hLineTop"></div>
+    <h2 class="reveal-iceland" id="revealText">ICELAND</h2>
+    <p class="reveal-year" id="revealYear">2 0 2 6</p>
+    <div class="h-line bottom" id="hLineBottom"></div>
+  </div>
+  <div class="sketch-frame" id="sketchFrame">
+    <div class="particle-field" id="particleField"></div>
+    <img src="adventure.jpg" alt="Iceland 2026">
+  </div>
+</div>
+
+<script>
+const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+// ====== CANVAS ======
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let w, h, stars = [], mouseX = 0, mouseY = 0;
+let nebulae = [];
+
+function resize() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Stars
+const starCount = isMobile ? 180 : 400;
+for (let i = 0; i < starCount; i++) {
+  stars.push({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    size: Math.random() * 1.8 + 0.2,
+    baseAlpha: Math.random() * 0.7 + 0.2,
+    twinkleSpeed: Math.random() * 0.03 + 0.005,
+    twinkleOffset: Math.random() * Math.PI * 2
+  });
+}
+
+// Nebula clouds — soft color patches that drift slowly
+const nebulaCount = isMobile ? 4 : 7;
+for (let i = 0; i < nebulaCount; i++) {
+  nebulae.push({
+    x: Math.random() * w,
+    y: Math.random() * h * 0.7,
+    r: 100 + Math.random() * 200,
+    color: [
+      [125, 211, 192],
+      [196, 166, 245],
+      [240, 160, 200],
+      [137, 196, 225],
+      [181, 234, 215],
+      [213, 194, 240],
+      [245, 198, 208],
+    ][i % 7],
+    alpha: 0.012 + Math.random() * 0.015,
+    driftX: (Math.random() - 0.5) * 0.08,
+    driftY: (Math.random() - 0.5) * 0.04,
+    pulse: Math.random() * 0.003 + 0.001,
+    offset: Math.random() * Math.PI * 2,
+  });
+}
+
+function animate(t) {
+  ctx.clearRect(0, 0, w, h);
+
+  // Sky gradient
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+  skyGrad.addColorStop(0, '#04040f');
+  skyGrad.addColorStop(0.5, '#08081a');
+  skyGrad.addColorStop(1, '#0e0c20');
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, w, h);
+
+  // Nebula clouds
+  nebulae.forEach(n => {
+    const px = n.x + Math.sin(t * n.driftX * 0.01 + n.offset) * 40;
+    const py = n.y + Math.cos(t * n.driftY * 0.01 + n.offset) * 25;
+    const pr = n.r + Math.sin(t * n.pulse + n.offset) * 30;
+    const a = n.alpha + Math.sin(t * n.pulse * 0.5 + n.offset) * 0.005;
+
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, pr);
+    grad.addColorStop(0, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${a})`);
+    grad.addColorStop(0.5, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, ${a * 0.4})`);
+    grad.addColorStop(1, `rgba(${n.color[0]}, ${n.color[1]}, ${n.color[2]}, 0)`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+  });
+
+  // Stars
+  const mx = isMobile ? 0 : (mouseX - w / 2) * 0.005;
+  const my = isMobile ? 0 : (mouseY - h / 2) * 0.005;
+
+  stars.forEach(star => {
+    const twinkle = Math.sin(t * star.twinkleSpeed + star.twinkleOffset);
+    const alpha = star.baseAlpha + twinkle * 0.35;
+    const size = star.size * (0.8 + twinkle * 0.25);
+    const sx = star.x + mx * (star.size * 0.5);
+    const sy = star.y + my * (star.size * 0.5);
+
+    ctx.beginPath();
+    ctx.arc(sx, sy, Math.max(size, 0.2), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(240, 237, 232, ${Math.max(alpha, 0.05)})`;
+    ctx.fill();
+
+    // Cross-sparkle on bright stars
+    if (star.size > 1.3 && alpha > 0.5) {
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.15;
+      ctx.strokeStyle = '#f0ede8';
+      ctx.lineWidth = 0.5;
+      const len = size * 4;
+      ctx.beginPath();
+      ctx.moveTo(sx - len, sy); ctx.lineTo(sx + len, sy);
+      ctx.moveTo(sx, sy - len); ctx.lineTo(sx, sy + len);
+      ctx.stroke();
+      ctx.restore();
+
+      // Soft glow halo
+      ctx.beginPath();
+      ctx.arc(sx, sy, size * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220, 200, 240, ${alpha * 0.06})`;
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// Mouse (desktop)
+if (!isMobile) {
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    const glow = document.getElementById('cursorGlow');
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+}
+
+// ====== TIMED REVEAL ======
+const phaseReady = document.getElementById('phaseReady');
+const phaseReveal = document.getElementById('phaseReveal');
+const revealText = document.getElementById('revealText');
+const revealYear = document.getElementById('revealYear');
+const glowRing = document.getElementById('glowRing');
+const hLineTop = document.getElementById('hLineTop');
+const hLineBottom = document.getElementById('hLineBottom');
+const sketchFrame = document.getElementById('sketchFrame');
+const revealSparkles = document.querySelectorAll('.reveal-sparkle');
+
+setTimeout(() => {
+  // Fade out "are you ready?"
+  phaseReady.classList.add('hidden');
+
+  // After it fades, show the reveal
+  setTimeout(() => {
+    phaseReveal.classList.add('show');
+
+    // Stagger the elements in
+    setTimeout(() => {
+      revealText.classList.add('visible');
+      revealYear.classList.add('visible');
+      glowRing.classList.add('visible');
+      hLineTop.classList.add('visible');
+      hLineBottom.classList.add('visible');
+      revealSparkles.forEach(s => s.classList.add('visible'));
+      sketchFrame.classList.add('visible');
+    }, 100);
+  }, 600);
+}, 2000);
+
+// ====== PARTICLES ======
+const pf = document.getElementById('particleField');
+const colors = ['var(--aurora-1)', 'var(--aurora-3)', 'var(--aurora-4)', 'var(--blush)', 'var(--lavender)'];
+const particleCount = isMobile ? 12 : 24;
+
+for (let i = 0; i < particleCount; i++) {
+  const p = document.createElement('div');
+  const isHeart = Math.random() > 0.7;
+  p.className = isHeart ? 'particle heart' : 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.setProperty('--size', (isHeart ? (5 + Math.random() * 5) : (2 + Math.random() * 3)) + 'px');
+  p.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+  p.style.setProperty('--dur', (4 + Math.random() * 6) + 's');
+  p.style.setProperty('--delay', (Math.random() * 5) + 's');
+  p.style.setProperty('--drift', (-20 - Math.random() * 30) + 'px');
+  pf.appendChild(p);
+}
+
+// ====== FLOATING HEARTS ======
+const heartsContainer = document.getElementById('floatingHearts');
+const heartColors = ['var(--aurora-4)', 'var(--blush)', 'var(--lavender)', 'var(--soft-mint)'];
+const heartCount = isMobile ? 5 : 8;
+
+for (let i = 0; i < heartCount; i++) {
+  const heart = document.createElement('div');
+  heart.className = 'floating-heart';
+  heart.innerHTML = '&#9829;';
+  heart.style.setProperty('--x', Math.random() * 100 + '%');
+  heart.style.setProperty('--size', (7 + Math.random() * 8) + 'px');
+  heart.style.setProperty('--color', heartColors[Math.floor(Math.random() * heartColors.length)]);
+  heart.style.setProperty('--dur', (12 + Math.random() * 18) + 's');
+  heart.style.setProperty('--delay', (Math.random() * 15) + 's');
+  heartsContainer.appendChild(heart);
+}
+</script>
+
+</body>
+</html>
