@@ -321,7 +321,7 @@
   <div class="grid" id="grid"></div>
 
   <div class="footer">
-    auto-refreshes every 30s &middot; data scraped from terminal frontends
+    auto-refreshes every 30s &middot; powered by terminal APIs
   </div>
 </div>
 
@@ -347,7 +347,7 @@ function createCard(key, data) {
       <div class="card-count ${data.count === null ? 'unavailable' : ''}" id="count-${key}">
         ${data.count === null ? 'no data' : (data.count === undefined ? '<div class="shimmer"></div>' : formatNumber(data.count))}
       </div>
-      <div class="card-label">traders online</div>
+      <div class="card-label">${data.source === 'coming-soon' ? 'coming soon' : 'traders online'}</div>
       <div class="card-bar">
         <div class="card-bar-fill" id="bar-${key}"></div>
       </div>
@@ -388,6 +388,10 @@ function updateUI(data) {
 
     // Update source badge
     card.querySelector('.card-source').textContent = val.source || 'unknown';
+
+    // Update label for coming-soon terminals
+    const label = card.querySelector('.card-label');
+    label.textContent = val.source === 'coming-soon' ? 'coming soon' : 'traders online';
 
     // Update bar
     const bar = document.getElementById(`bar-${key}`);
