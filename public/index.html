@@ -359,14 +359,10 @@ function render(counts) {
 
 async function fetchAxiomCount() {
   try {
-    const resp = await fetch('https://api6.axiom.trade/online-users-count', {
-      headers: { 'Accept': 'application/json' }
-    });
+    const resp = await fetch('/api/axiom');
     if (resp.ok) {
       const data = await resp.json();
-      if (typeof data === 'number') return data;
-      return data.count || data.online || data.users || data.onlineUsers ||
-        data.online_users_count || data.online_users || 0;
+      return data.count || 0;
     }
   } catch (e) {
     console.log('Axiom API:', e.message);
