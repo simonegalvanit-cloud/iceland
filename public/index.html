@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a26;
+    --border: #2a2a3a;
+    --text: #e4e4ef;
+    --text-dim: #7a7a8e;
+    --accent: #a78bfa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(167, 139, 250, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167, 139, 250, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(135deg, #a78bfa, #f472b6, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #34d399;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-dot.error { background: #f87171; }
+  .status-dot.loading { background: #facc15; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* Total banner */
+  .total-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .total-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #a78bfa, #f472b6, #34d399, #facc15, #fb923c);
+  }
+
+  .total-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .total-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .total-sub {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Terminal cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    border-color: var(--card-color, var(--border));
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-color, var(--accent));
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-name {
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--card-color, var(--accent));
+    box-shadow: 0 0 8px var(--card-color, var(--accent));
+  }
+
+  .card-source {
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .card-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 8px;
+    min-height: 1em;
+  }
+
+  .card-count.loading {
+    color: var(--text-dim);
+    font-size: 1rem;
+  }
+
+  .card-count.unavailable {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  .card-label {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .card-url {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .card-url:hover {
+    opacity: 1;
+    color: var(--card-color, var(--accent));
+  }
+
+  /* Bar visualization */
+  .card-bar {
+    margin-top: 14px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+
+  .card-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--card-color, var(--accent));
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 0%;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Loading shimmer */
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+    background-size: 400px 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    height: 40px;
+    width: 120px;
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px; }
+    .grid { grid-template-columns: 1fr; }
+    .header { margin-bottom: 32px; }
+    .total-banner { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header class="header">
+    <h1><span>TERMINAL TRACKER</span></h1>
+    <p>Live trader counts across Solana trading terminals</p>
+    <div class="status-bar">
+      <div class="status-dot loading" id="statusDot"></div>
+      <span id="statusText">connecting...</span>
+    </div>
+  </header>
+
+  <div class="total-banner">
+    <div class="total-label">Total Traders Online</div>
+    <div class="total-count" id="totalCount">--</div>
+    <div class="total-sub">across all terminals</div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="footer">
+    auto-refreshes every 30s &middot; data scraped from terminal frontends
+  </div>
+</div>
+
+<script>
+const TERMINALS = ['axiom', 'bullx', 'photon', 'padre', 'trojan'];
+let maxCount = 0;
+
+function formatNumber(n) {
+  if (!n && n !== 0) return '--';
+  return n.toLocaleString();
+}
+
+function createCard(key, data) {
+  return `
+    <div class="card" style="--card-color: ${data.color}" id="card-${key}">
+      <div class="card-header">
+        <div class="card-name">
+          <div class="card-dot"></div>
+          ${data.name}
+        </div>
+        <div class="card-source">${data.source || '...'}</div>
+      </div>
+      <div class="card-count ${data.count === null ? 'unavailable' : ''}" id="count-${key}">
+        ${data.count === null ? 'no data' : (data.count === undefined ? '<div class="shimmer"></div>' : formatNumber(data.count))}
+      </div>
+      <div class="card-label">traders online</div>
+      <div class="card-bar">
+        <div class="card-bar-fill" id="bar-${key}"></div>
+      </div>
+      <a class="card-url" href="${data.url}" target="_blank" rel="noopener">${data.url}</a>
+    </div>
+  `;
+}
+
+function renderInitial() {
+  const grid = document.getElementById('grid');
+  const placeholders = {
+    axiom: { name: 'Axiom', color: '#a78bfa', url: 'https://axiom.trade' },
+    bullx: { name: 'BullX', color: '#facc15', url: 'https://bullx.io' },
+    photon: { name: 'Photon', color: '#34d399', url: 'https://photon-sol.tinyastro.io' },
+    padre: { name: 'Padre', color: '#f472b6', url: 'https://trade.padre.gg' },
+    trojan: { name: 'Trojan', color: '#fb923c', url: 'https://trojan.com' },
+  };
+  grid.innerHTML = Object.entries(placeholders).map(([key, data]) => createCard(key, data)).join('');
+}
+
+function updateUI(data) {
+  let total = 0;
+  maxCount = 0;
+
+  // Find max for bar scaling
+  for (const [key, val] of Object.entries(data)) {
+    if (val.count && val.count > maxCount) maxCount = val.count;
+  }
+
+  for (const [key, val] of Object.entries(data)) {
+    const card = document.getElementById(`card-${key}`);
+    if (!card) continue;
+
+    // Update count
+    const countEl = document.getElementById(`count-${key}`);
+    countEl.className = 'card-count' + (val.count === null ? ' unavailable' : '');
+    countEl.textContent = val.count === null ? 'no data' : formatNumber(val.count);
+
+    // Update source badge
+    card.querySelector('.card-source').textContent = val.source || 'unknown';
+
+    // Update bar
+    const bar = document.getElementById(`bar-${key}`);
+    const pct = maxCount > 0 && val.count ? (val.count / maxCount * 100) : 0;
+    bar.style.width = pct + '%';
+
+    if (val.count) total += val.count;
+  }
+
+  document.getElementById('totalCount').textContent = formatNumber(total || null);
+}
+
+async function fetchData() {
+  const dot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+
+  dot.className = 'status-dot loading';
+  statusText.textContent = 'fetching...';
+
+  try {
+    const resp = await fetch('/api/counts');
+    const json = await resp.json();
+    updateUI(json.data);
+
+    dot.className = 'status-dot';
+    const age = json.cached ? ` (cached ${Math.round(json.age / 1000)}s ago)` : '';
+    statusText.textContent = `live${age} · ${new Date().toLocaleTimeString()}`;
+  } catch (e) {
+    dot.className = 'status-dot error';
+    statusText.textContent = 'connection error · retrying...';
+  }
+}
+
+// Init
+renderInitial();
+fetchData();
+setInterval(fetchData, 30_000);
+</script>
+
+</body>
+</html>
